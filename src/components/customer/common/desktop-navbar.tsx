@@ -8,7 +8,6 @@ import {
   ShoppingBag,
   ShoppingBasket,
   ShoppingCart,
-  Store,
   User,
   type LucideIcon,
 } from "lucide-react"
@@ -37,6 +36,7 @@ import CustomerProfileDialog from "../profile/customer-profile-dialog"
 import CustomerOrdersDialog from "../orders/customer-orders-dialog"
 import CustomerCartAndCheckoutDrawer from "../cart-and-checkout/customer-cart-and-checkout-drawer"
 import { CustomerMobileNavbar } from "./mobile-navbar"
+import { Logo } from "@/components/ui/Logo"
 
 /**
  * PRO TIP: Moving styles to a structured object makes maintenance 
@@ -94,14 +94,9 @@ export function CustomerNavbar() {
         
         {/* Brand Section */}
         <div className="flex items-center gap-8">
-          <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
-              <Store className="size-5" />
-            </div>
-            <span className="text-xl font-bold tracking-tight text-foreground">
-              E-Shopify
-            </span>
-          </Link>
+          <Link to="/" className="flex items-center gap-2 hover:opacity-90">
+              <Logo />
+            </Link>
 
           {/* Desktop Links */}
           <div className="hidden lg:block">

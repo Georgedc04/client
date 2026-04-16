@@ -8,7 +8,6 @@ import {
   Menu,
   ShoppingBag,
   ShoppingBasket,
-  Store,
   User,
   ChevronRight,
 } from "lucide-react"
@@ -29,6 +28,7 @@ import { useCustomerWishlistStore } from "@/features/customer/wishlist/store"
 import { useCustomerProfileStore } from "@/features/customer/profile/store"
 import { useCustomerCartAndCheckoutStore } from "@/features/customer/cart-and-checkout/store"
 import { useCustomerOrdersStore } from "@/features/customer/orders/store"
+import { Logo } from "@/components/ui/Logo"
 
 const MOBILE_NAV_STYLES = {
   item: "flex items-center justify-between w-full rounded-sm px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-zinc-100 active:bg-zinc-200",
@@ -71,8 +71,10 @@ export function CustomerMobileNavbar({ isSignedIn }: { isSignedIn: boolean }) {
         <SheetContent side="left" className="w-70 p-0 border-none rounded-r-xl flex flex-col">
           <SheetHeader className="p-4 border-b bg-zinc-50/50">
             <SheetTitle className="flex items-center gap-2">
-              <Store className="size-5 text-primary" />
-              <span className="text-base font-bold tracking-tight">E-Shopify</span>
+             
+             <Link to="/" className="flex items-center gap-2 hover:opacity-90">
+                 <Logo />
+             </Link>
             </SheetTitle>
           </SheetHeader>
 

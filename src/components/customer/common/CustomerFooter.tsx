@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Logo } from "@/components/ui/Logo";
 
 const STYLES = {
   footer: "bg-zinc-50 dark:bg-zinc-950 border-t border-border/40",
@@ -24,10 +25,8 @@ export function CustomerFooter() {
           
           {/* 1. BRAND & MISSION */}
           <div className="space-y-6">
-            <Link to="/" className="flex items-center gap-2">
-              <span className="text-xl font-bold tracking-tighter">
-                E-Shopify
-              </span>
+             <Link to="/" className="flex items-center gap-2 hover:opacity-90">
+               <Logo />
             </Link>
             <p className="text-sm leading-relaxed text-muted-foreground max-w-xs">
               Curating the finest essentials for your modern lifestyle. Quality
