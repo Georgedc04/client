@@ -9,7 +9,6 @@ const headerClass = "space-y-1";
 
 const titleClass = "text-sm font-semibold text-foreground";
 
-const descriptionClass = "text-sm text-muted-foreground";
 
 const actionsRowClass = "flex flex-wrap items-center gap-3";
 
