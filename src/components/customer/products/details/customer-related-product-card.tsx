@@ -6,22 +6,24 @@ import {
 import type { CustomerProduct } from "@/features/customer/products/types";
 import { formatPrice } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import { Star } from "lucide-react";
 
 /**
- * AMAZON DENSITY:
- * Small fonts (12px-14px), tight padding, and high-contrast links.
+ * ART DESIGN SYSTEM:
+ * Asymmetric rounding, editorial spacing, and brand-consistent colors.
  */
 const STYLES = {
-  card: "group overflow-hidden border-zinc-200 bg-white shadow-none hover:shadow-md transition-shadow duration-200 rounded-sm",
-  imageWrap: "relative aspect-square bg-white p-2", // Amazon usually uses white backgrounds for related items
-  image: "h-full w-full object-contain mix-blend-multiply", // 'contain' works better for various product shapes in a grid
-  content: "space-y-1 p-3 pt-1",
-  brand: "text-[11px] font-normal text-zinc-500",
-  title: "line-clamp-2 text-[13px] leading-snug text-cyan-700 group-hover:text-orange-700 group-hover:underline",
-  priceRow: "flex flex-wrap items-center gap-1.5 pt-0.5",
-  salePrice: "text-[15px] font-medium text-zinc-900",
-  originalPrice: "text-[12px] text-zinc-500 line-through",
-  badge: "absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm"
+  // Matching the Petal shape from the logo and main product card
+  card: "group overflow-hidden border-none bg-white transition-all duration-500 hover:shadow-xl hover:shadow-purple-100 rounded-t-[2rem] rounded-bl-[2rem]",
+  imageWrap: "relative aspect-square bg-slate-50 overflow-hidden rounded-t-[1.8rem] rounded-bl-[1.8rem] m-1.5", 
+  image: "h-full w-full object-cover transition-transform duration-700 group-hover:scale-110",
+  content: "space-y-2 p-4 pt-2",
+  brand: "text-[10px] font-bold uppercase tracking-[0.2em] text-purple-500/80",
+  title: "line-clamp-1 text-sm font-medium text-slate-800 transition-colors group-hover:text-purple-700",
+  priceRow: "flex items-baseline gap-2 pt-1",
+  salePrice: "text-base font-bold text-slate-900",
+  originalPrice: "text-xs text-slate-400 line-through decoration-red-500/50",
+  badge: "absolute top-3 left-3 bg-white/90 backdrop-blur-md text-purple-600 text-[9px] font-bold px-2 py-1 rounded-full shadow-sm ring-1 ring-purple-50"
 };
 
 type CustomerProductRelatedCardProps = {
@@ -41,7 +43,7 @@ function CustomerProductRelatedCard({
         <div className={STYLES.imageWrap}>
           {hasSale && (
              <div className={STYLES.badge}>
-               {product.salePercentage}% off
+               -{product.salePercentage}%
              </div>
           )}
           
@@ -53,26 +55,26 @@ function CustomerProductRelatedCard({
               loading="lazy" 
             />
           ) : (
-            <div className="flex h-full items-center justify-center text-[10px] text-zinc-400">
+            <div className="flex h-full items-center justify-center text-[10px] text-slate-300 uppercase tracking-widest">
               No Image
             </div>
           )}
         </div>
 
         <CardContent className={STYLES.content}>
-          {/* Amazon often puts the title first, then the rating, then the price */}
-          <h3 className={STYLES.title}>
-            {product.title}
-          </h3>
+          <div className="space-y-0.5">
+            <p className={STYLES.brand}>
+              {product.brand}
+            </p>
+            <h3 className={STYLES.title}>
+              {product.title}
+            </h3>
+          </div>
 
-          <p className={STYLES.brand}>
-            by {product.brand}
-          </p>
-
-          {/* Amazon Style Rating Placeholder */}
-          <div className="flex items-center gap-1 text-[11px]">
-             <span className="text-orange-400">★★★★☆</span>
-             <span className="text-cyan-700">12</span>
+          {/* Boutique Style Rating */}
+          <div className="flex items-center gap-1 opacity-70">
+            <Star className="size-3 fill-amber-400 text-amber-400" />
+            <span className="text-[11px] font-medium text-slate-500">4.8</span>
           </div>
 
           <div className={STYLES.priceRow}>
@@ -84,9 +86,9 @@ function CustomerProductRelatedCard({
             )}
           </div>
           
-          {/* Delivery tag adds to the Amazon feel */}
-          <p className="text-[11px] text-zinc-600 pt-1">
-            Get it by <span className="font-bold text-zinc-900">Tomorrow</span>
+          {/* Subtle Tagline */}
+          <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight pt-1">
+            Artisan Quality
           </p>
         </CardContent>
       </Link>

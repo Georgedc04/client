@@ -1,8 +1,9 @@
 import * as React from "react"
 import { Link } from "react-router-dom"
-import { useAuth } from "@clerk/react"
+import { useAuth, useUser } from "@clerk/react"
 import {
   Heart,
+  LayoutDashboard,
   LogIn,
   LogOut,
   ShoppingBag,
@@ -23,7 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 
-// Store Hooks
+// Store Hooks (unchanged)
 import { useAuthStore } from "@/features/auth/store"
 import { useCustomerWishlistStore } from "@/features/customer/wishlist/store"
 import { useCustomerProfileStore } from "@/features/customer/profile/store"
@@ -38,21 +39,17 @@ import CustomerCartAndCheckoutDrawer from "../cart-and-checkout/customer-cart-an
 import { CustomerMobileNavbar } from "./mobile-navbar"
 import { Logo } from "@/components/ui/Logo"
 
-/**
- * PRO TIP: Moving styles to a structured object makes maintenance 
- * much easier as the project grows.
- */
 const NAV_STYLES = {
-  header: "sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60",
+  header: "sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl",
   container: "mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-6 lg:px-8",
-  navItem: "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
-  iconBtn: "relative inline-flex size-9 items-center justify-center rounded-lg transition-colors hover:bg-accent hover:text-accent-foreground",
-  badge: "absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground animate-in zoom-in duration-300",
+  navItem: "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent",
+  iconBtn: "relative inline-flex size-9 items-center justify-center rounded-lg hover:bg-accent",
+  badge: "absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white",
 }
 
-function NavTextLink({ href, label, icon: Icon, className }: { href: string; label: string; icon: LucideIcon; className?: string }) {
+function NavTextLink({ href, label, icon: Icon }: { href: string; label: string; icon: LucideIcon }) {
   return (
-    <Link to={href} className={cn(NAV_STYLES.navItem, className)}>
+    <Link to={href} className={NAV_STYLES.navItem}>
       <Icon className="size-4" />
       <span>{label}</span>
     </Link>
@@ -61,18 +58,22 @@ function NavTextLink({ href, label, icon: Icon, className }: { href: string; lab
 
 export function CustomerNavbar() {
   const { isSignedIn, signOut, isLoaded } = useAuth()
+  const { user } = useUser() // 🔥 Clerk user
+
   const { isBootstrapped } = useAuthStore()
 
-  // Feature Stores
+  // 🔥 ADMIN CHECK FROM CLERK METADATA
+  const isAdmin = user?.publicMetadata?.role === "admin"
+
+  // Stores
   const { items: wishlistItems, loadWishlist, clear: clearWishlist, setOpen: setWishlistOpen } = useCustomerWishlistStore()
   const { openProfile, clear: clearProfile } = useCustomerProfileStore()
   const { setOpen: setCartOpen, cart, loadCart } = useCustomerCartAndCheckoutStore()
   const { openOrders } = useCustomerOrdersStore()
 
-  // Data Loading Logic
   React.useEffect(() => {
     if (!isLoaded || !isBootstrapped) return
-    
+
     void loadCart(Boolean(isSignedIn))
 
     if (!isSignedIn) {
@@ -92,54 +93,70 @@ export function CustomerNavbar() {
     <header className={NAV_STYLES.header}>
       <div className={NAV_STYLES.container}>
         
-        {/* Brand Section */}
+        {/* Logo */}
         <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center gap-2 hover:opacity-90">
-              <Logo />
-            </Link>
+            <Logo />
+          </Link>
 
-          {/* Desktop Links */}
           <div className="hidden lg:block">
             <NavTextLink href="/collections" label="Collections" icon={ShoppingBag} />
           </div>
         </div>
 
-        {/* Action Section */}
-        <div className="flex items-center gap-1 sm:gap-2">
-          <nav className="hidden items-center gap-1 lg:flex">
-            
-            {/* Wishlist Icon */}
+        {/* Right Section */}
+        <div className="flex items-center gap-2">
+          <nav className="hidden lg:flex items-center gap-1">
+
+            {/* Wishlist */}
             {showFullUi && (
-              <button 
-                onClick={() => setWishlistOpen(true)} 
-                className={NAV_STYLES.iconBtn}
-                title="Wishlist"
-              >
+              <button onClick={() => setWishlistOpen(true)} className={NAV_STYLES.iconBtn}>
                 <Heart className={cn("size-5", wishlistCount > 0 && "fill-primary text-primary")} />
                 {wishlistCount > 0 && <span className={NAV_STYLES.badge}>{wishlistCount}</span>}
               </button>
             )}
 
-            {/* Account Menu */}
+            {/* Account */}
             {isSignedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-2 rounded-lg font-semibold">
+                  <Button variant="ghost" size="sm" className="gap-2 rounded-full text-xs font-bold uppercase tracking-widest">
                     <User className="size-4" />
-                    <span className="max-w-25 truncate">Account</span>
+                    Account
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 mt-2 rounded-xl">
-                  <DropdownMenuItem onClick={() => openProfile()} className="gap-2 cursor-pointer">
+
+                <DropdownMenuContent align="end" className="w-56 mt-3 rounded-2xl shadow-xl p-2">
+
+                  {/* 🔥 ADMIN ONLY */}
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link
+                        to="/admin"
+                        className="flex items-center gap-3 py-3 px-3 rounded-xl font-bold text-purple-600 hover:bg-purple-50"
+                      >
+                        <LayoutDashboard className="size-4" />
+                        Admin Panel
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem onClick={() => openProfile()}>
                     <User className="size-4" /> My Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => openOrders()} className="gap-2 cursor-pointer">
+
+                  <DropdownMenuItem onClick={() => openOrders()}>
                     <ShoppingBasket className="size-4" /> My Orders
                   </DropdownMenuItem>
+
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => signOut()} className="gap-2 text-destructive focus:text-destructive cursor-pointer">
+
+                  <DropdownMenuItem onClick={() => signOut()} className="text-red-500">
                     <LogOut className="size-4" /> Logout
                   </DropdownMenuItem>
+
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
@@ -147,21 +164,17 @@ export function CustomerNavbar() {
             )}
           </nav>
 
-          {/* Cart Trigger (Always Visible) */}
-          <button 
-            onClick={() => setCartOpen(true)} 
-            className={NAV_STYLES.iconBtn}
-            title="Cart"
-          >
+          {/* Cart */}
+          <button onClick={() => setCartOpen(true)} className={NAV_STYLES.iconBtn}>
             <ShoppingCart className="size-5" />
             {cartCount > 0 && <span className={NAV_STYLES.badge}>{cartCount}</span>}
           </button>
 
-          {/* Mobile Menu */}
+          {/* Mobile */}
           <CustomerMobileNavbar isSignedIn={!!isSignedIn} />
         </div>
 
-        {/* Global Dialogs/Drawers */}
+        {/* Dialogs */}
         {showFullUi && (
           <>
             <CustomerWishlistDialog />
@@ -169,6 +182,7 @@ export function CustomerNavbar() {
             <CustomerOrdersDialog />
           </>
         )}
+
         <CustomerCartAndCheckoutDrawer />
       </div>
     </header>

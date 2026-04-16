@@ -1,28 +1,28 @@
 import { getSwatchColor } from "@/features/customer/products/product-list.shared";
 import type { ProductSize } from "@/features/customer/products/types";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
-/** * AMAZON STYLE: 
- * Tight gaps, smaller text, and subtle shadows instead of heavy rings.
+/** * ARTS DESIGN STYLE: 
+ * Asymmetric rounding (Petal), generous tracking, and floating active states.
  */
 const STYLES = {
-  wrap: "flex flex-wrap gap-2",
-  // Reduced padding and smaller font
-  base: "relative flex items-center justify-center border text-[13px] transition-all duration-200 cursor-pointer select-none",
+  wrap: "flex flex-wrap gap-3",
+  // Softening the base and moving to the Petal Shape
+  base: "relative flex items-center justify-center border text-[11px] font-bold uppercase tracking-widest transition-all duration-300 cursor-pointer select-none rounded-t-2xl rounded-bl-2xl",
   
-  // Amazon uses a thin orange or black border for active items
-  active: "border-orange-600 ring-1 ring-orange-600 bg-white z-10",
-  inactive: "border-zinc-300 bg-white hover:border-zinc-400 text-zinc-900",
+  // High-end active state: Dark background with white text
+  active: "border-slate-900 bg-slate-900 text-white shadow-lg shadow-purple-200 z-10 scale-105",
+  inactive: "border-slate-200 bg-white hover:border-purple-300 text-slate-600 hover:text-purple-600",
   
-  // Size-specific: Square and uniform
-  size: "h-8 min-w-[40px] px-2 rounded-sm",
+  // Size-specific: Elegant and breathable
+  size: "h-11 min-w-[54px] px-4",
   
-  // Color-specific: Very compact
-  color: "h-9 px-2.5 rounded-sm gap-2",
-  swatch: "size-4 rounded-sm border border-black/10",
+  // Color-specific: Using the swatch as a focal point
+  color: "h-11 px-4 gap-3",
+  swatch: "size-4 rounded-full border border-white ring-1 ring-slate-200 shadow-inner",
   
-  // Sold out state (Optional but very Amazon)
-  disabled: "opacity-40 grayscale cursor-not-allowed bg-zinc-50 border-dashed"
+  disabled: "opacity-30 grayscale cursor-not-allowed bg-slate-50 border-dashed"
 };
 
 type CustomerProductOptionsGroupProps = {
@@ -30,7 +30,7 @@ type CustomerProductOptionsGroupProps = {
   selectedValue: string;
   onSelect: (value: ProductSize) => void;
   variant: "color" | "size";
-  className?: string; // To allow parent to adjust spacing
+  className?: string; 
 };
 
 function CustomerProductOptionsGroup({
@@ -63,15 +63,19 @@ function CustomerProductOptionsGroup({
                   style={{ backgroundColor: getSwatchColor(value) }}
                   aria-hidden="true"
                 />
-                <span className="text-[12px] capitalize">{value}</span>
+                <span className="text-[10px] leading-none">{value}</span>
               </>
             ) : (
-              <span className="font-normal">{value}</span>
+              <span className="leading-none">{value}</span>
             )}
 
-            {/* Subtle Active Checkmark (Amazon uses a tiny corner fold or border) */}
+            {/* Artistic Active Indicator: A sliding glow or background */}
             {isActive && (
-              <div className="absolute -right-px -bottom-px size-2 bg-orange-600 clip-path-triangle" />
+              <motion.div 
+                layoutId={`active-pill-${variant}`}
+                className="absolute inset-0 rounded-t-2xl rounded-bl-2xl bg-purple-600/10 -z-10"
+                transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
+              />
             )}
           </button>
         );
